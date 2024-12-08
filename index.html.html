@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Color Changer</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 10px;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .color-pickers {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .pallet {
+            background-color: rgb(190, 188, 188);
+            height: 100px;
+            width: 400px;
+            padding-top: 20px;
+            border-radius: 8px;
+            border: 2px solid black;
+        }
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(15, 30px);
+            grid-template-rows: repeat(19, 30px);
+            gap: 2px;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #000000;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .generate-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .generate-btn:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #fff;
+            font-family: monospace;
+            white-space: pre-wrap; /* Makes the text wrap within the div */
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="pallet">
+            <div class="color-pickers">
+                <div>
+                    <input type="color" id="colorPicker1" value="#0000ff">
+                    <button id="setPicker1">Set</button>
+                </div>
+                <div>
+                    <input type="color" id="colorPicker2" value="#00ff00">
+                    <button id="setPicker2">Set</button>
+                </div>
+                <div>
+                    <input type="color" id="colorPicker3" value="#00ff00">
+                    <button id="setPicker3">Set</button>
+                </div>
+                <div>
+                    <input type="color" id="colorPicker4" value="#00ff00">
+                    <button id="setPicker4">Set</button>
+                </div>
+                <div>
+                    <input type="color" id="colorPicker5" value="#00ff00">
+                    <button id="setPicker5">Set</button>
+                </div>
+                <input type="button" id="redPicker" value="    " style="background-color: red; border: none; padding: 5px;">
+                <input type="button" id="bluePicker" value="    " style="background-color: blue; border: none; padding: 5px;">
+                <input type="button" id="greenPicker" value="    " style="background-color: green; border: none; padding: 5px;">
+                <input type="button" id="blackPicker" value="    " style="background-color: rgb(0, 0, 0); border: none; padding: 5px;">
+                <input type="button" id="magentaPicker" value="    " style="background-color: magenta; border: none; padding: 5px;">
+                <input type="button" id="yellowPicker" value="    " style="background-color: yellow; border: none; padding: 5px;">
+                <input type="button" id="purplePicker" value="    " style="background-color: purple; border: none; padding: 5px;">
+                <input type="button" id="orangePicker" value="    " style="background-color: orange; border: none; padding: 5px;">
+            </div>
+        </div>
+        <button class="generate-btn" id="generateButton">Generate Colors</button>
+    </div>
+    <div class="grid-container">
+        <div class="grid" id="grid"></div>
+    </div>
+    <div class="output" id="output"></div>
+
+    <script>
+        const gridContainer = document.getElementById('grid');
+        const colorPicker1 = document.getElementById('colorPicker1');
+        const colorPicker2 = document.getElementById('colorPicker2');
+        const colorPicker3 = document.getElementById('colorPicker3');
+        const colorPicker4 = document.getElementById('colorPicker4');
+        const colorPicker5 = document.getElementById('colorPicker5');
+        const setPicker1 = document.getElementById('setPicker1');
+        const setPicker2 = document.getElementById('setPicker2');
+        const setPicker3 = document.getElementById('setPicker3');
+        const setPicker4 = document.getElementById('setPicker4');
+        const setPicker5 = document.getElementById('setPicker5');
+        const generateButton = document.getElementById('generateButton');
+        const outputDiv = document.getElementById('output');
+        let selectedColor = colorPicker1.value;
+        let isMouseDown = false;
+
+        // Update the selected color for the first color picker
+        colorPicker1.addEventListener('change', (event) => {
+            localStorage.setItem('colorPicker1', event.target.value);
+        });
+
+        // Update the selected color for the second color picker
+        colorPicker2.addEventListener('change', (event) => {
+            localStorage.setItem('colorPicker2', event.target.value);
+        });
+
+        colorPicker3.addEventListener('change', (event) => {
+            localStorage.setItem('colorPicker3', event.target.value);
+        });
+
+        colorPicker4.addEventListener('change', (event) => {
+            localStorage.setItem('colorPicker4', event.target.value);
+        });
+
+        colorPicker5.addEventListener('change', (event) => {
+            localStorage.setItem('colorPicker5', event.target.value);
+        });
+
+        // Set the selected color when clicking the set buttons
+        setPicker1.addEventListener('click', () => {
+            selectedColor = colorPicker1.value;
+        });
+
+        setPicker2.addEventListener('click', () => {
+            selectedColor = colorPicker2.value;
+        });
+
+        setPicker3.addEventListener('click', () => {
+            selectedColor = colorPicker3.value;
+        });
+
+        setPicker4.addEventListener('click', () => {
+            selectedColor = colorPicker4.value;
+        });
+
+        setPicker5.addEventListener('click', () => {
+            selectedColor = colorPicker5.value;
+        });
+
+        // Restore color picker states on page load
+        window.addEventListener('load', () => {
+            const savedColor1 = localStorage.getItem('colorPicker1');
+            const savedColor2 = localStorage.getItem('colorPicker2');
+            const savedColor3 = localStorage.getItem('colorPicker3');
+            const savedColor4 = localStorage.getItem('colorPicker4');
+            const savedColor5 = localStorage.getItem('colorPicker5');
+
+            if (savedColor1) {
+                colorPicker1.value = savedColor1;
+            }
+
+            if (savedColor2) {
+                colorPicker2.value = savedColor2;
+            }
+
+            if (savedColor3) {
+                colorPicker3.value = savedColor3;
+            }
+
+            if (savedColor4) {
+                colorPicker4.value = savedColor4;
+            }
+
+            if (savedColor5) {
+                colorPicker5.value = savedColor5;
+            }
+        });
+
+        // Set color when clicking specific color buttons
+        document.getElementById('redPicker').addEventListener('click', () => selectedColor = 'red');
+        document.getElementById('bluePicker').addEventListener('click', () => selectedColor = 'blue');
+        document.getElementById('greenPicker').addEventListener('click', () => selectedColor = 'green');
+        document.getElementById('blackPicker').addEventListener('click', () => selectedColor = 'black');
+        document.getElementById('magentaPicker').addEventListener('click', () => selectedColor = 'magenta');
+        document.getElementById('yellowPicker').addEventListener('click', () => selectedColor = 'yellow');
+        document.getElementById('purplePicker').addEventListener('click', () => selectedColor = 'purple');
+        document.getElementById('orangePicker').addEventListener('click', () => selectedColor = 'orange');
+
+        // Handle mouse events
+        document.body.addEventListener('mousedown', () => isMouseDown = true);
+        document.body.addEventListener('mouseup', () => isMouseDown = false);
+
+        // Create the grid
+        for (let i = 0; i < 15 * 19; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+
+            cell.addEventListener('mousedown', () => {
+                cell.style.backgroundColor = selectedColor;
+            });
+
+            cell.addEventListener('mouseover', () => {
+                if (isMouseDown) {
+                    cell.style.backgroundColor = selectedColor;
+                }
+            });
+
+            gridContainer.appendChild(cell);
+        }
+
+        // Generate button functionality
+        generateButton.addEventListener('click', () => {
+            const cells = document.querySelectorAll('.cell');
+            const rows = [];
+            let row = [];
+            cells.forEach((cell, index) => {
+                const color = window.getComputedStyle(cell).backgroundColor;
+                const rgb = color.match(/\d+/g).map(Number); // Extract RGB values
+                row.push(`(${rgb.join(',')})`);
+                if ((index + 1) % 15 === 0) {
+                    // Flip the row before adding it to the rows array
+                    rows.push(`[${row.reverse().join(', ')}]`);
+                    row = [];
+                }
+            });
+            // Reverse the order of rows
+            outputDiv.textContent = `[
+${rows.reverse().join(',\n')}
+]`;
+        });
+    </script>
+</body>
+</html>
